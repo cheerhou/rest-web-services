@@ -41,10 +41,14 @@ public class UserResource {
                 .path("/{id}")
                 .buildAndExpand(savedUser.getId()).toUri();
         //* return code 201 as created
-        return ResponseEntity.created (location).build();
+        return ResponseEntity.created(location).build();
     }
 
-    public void delete() {
-
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable Integer id) {
+        User user = service.deleteById(id);
+        if (user == null) {
+            throw new UserNotFoundException("id-" + id);
+        }
     }
 }
