@@ -1,6 +1,8 @@
 package com.cheerhou.rest.webservices.restfulwebservices.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -8,6 +10,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * @author hcj
@@ -25,16 +30,22 @@ public class UserResource {
     }
 
     @GetMapping("/users/{id}")
-    public User retrieveUser(@PathVariable Integer id) {
+    public EntityModel<User> retrieveUser(@PathVariable Integer id) {
         User user = service.findOne(id);
         if (user == null) {
             throw new UserNotFoundException("id-" + id);
         }
-        return user;
+        //HATEOS
+        EntityModel<User> resource = EntityModel.of(user);
+
+        //attach other link to resource
+        WebMvcLinkBuilder linkTo  = linkTo(methodOn(this.getClass()).retrieveAllUsers());
+        resource.add(linkTo.withRel("all-users"));
+        return resource;
     }
 
     @PostMapping("/users")
-    public ResponseEntity createUser(@Valid @RequestBody User user) {
+    public ResponseEntity<Object> createUser(@Valid @RequestBody User user) {
         User savedUser = service.save(user);
 
         //* return the status code
