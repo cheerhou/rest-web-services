@@ -1,18 +1,20 @@
 package com.cheerhou.rest.webservices.restfulwebservices.filtering;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author hcj
  * @Description
  * @Date 2020/12/14
  */
+@JsonIgnoreProperties(value = {"field1", "field3"})
 public class SomeBean {
     private String field1;
     private String field2;
 
     //this field will be completed ignored
-    @JsonIgnore
+//    @JsonIgnore
     private String field3;
 
     public SomeBean(String field1, String field2, String field3) {
